@@ -10,18 +10,25 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "7.1.0",
+    "@prisma/client": "7.1.0",
     "next": "16.0.8",
+    "pg": "8.16.3",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@tailwindcss/postcss": "4",
+    "@types/node": "20",
+    "@types/pg": "8.15.6",
+    "@types/react": "19",
+    "@types/react-dom": "19",
     "babel-plugin-react-compiler": "1.0.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+    "prisma": "7.1.0",
+    "tailwindcss": "4",
+    "tsx": "4.21.0",
+    "typescript": "5"
+  },
+  "packageManager": "pnpm@10.25.0+sha256.0f3726654b0b5e52e5800904de168afc3c667e2abf84bdb06d9ac1386104bd90"
 }
