@@ -10,7 +10,7 @@ export interface ValidateIdTokenParams {
 }
 
 export interface ValidateIdTokenResponse {
-  idToken: string;
+  encodedIdToken: string;
   decodedIdToken: JWTPayload;
 }
 
@@ -27,19 +27,19 @@ export const validateIdToken = ({
   }
 
   // Store the stringified token for simpler type-ing later on
-  let stringifiedToken: string;
+  let encodedIdToken: string;
   let decodedIdToken: JWTPayload;
   let alg: string | undefined;
 
   try {
     if (typeof idToken !== "string") {
       // If the token is not a jwt string, use it directly as an unsigned object
-      stringifiedToken = JSON.stringify(idToken);
+      encodedIdToken = JSON.stringify(idToken);
       decodedIdToken = idToken;
       alg = "none";
     } else {
       // Otherwise, we have a signed jwt string to decode
-      stringifiedToken = idToken;
+      encodedIdToken = idToken;
       decodedIdToken = decodeJwt(idToken);
       alg = decodeProtectedHeader(idToken).alg;
     }
@@ -163,5 +163,5 @@ export const validateIdToken = ({
     }
   }
 
-  return { idToken: stringifiedToken, decodedIdToken };
+  return { encodedIdToken, decodedIdToken };
 };
