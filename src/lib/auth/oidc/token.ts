@@ -1,3 +1,6 @@
+import { TokenResponse } from "@/models";
+import { fetchOpenidConfiguration } from "./";
+import { GOOGLE_ISSUER_URL } from "@/constants";
 import { decodeJwt, decodeProtectedHeader, type JWTPayload } from "jose";
 
 export interface ValidateIdTokenParams {
@@ -13,6 +16,24 @@ export interface ValidateIdTokenResponse {
   encodedIdToken: string;
   decodedIdToken: JWTPayload;
 }
+
+export const validateTokenResponse = async (
+  tokenResponse: TokenResponse,
+  nonce: string,
+) => {
+  const { id_token_signing_alg_values_supported, acr_values_supported } =
+    await fetchOpenidConfiguration(GOOGLE_ISSUER_URL);
+  const { decodedIdToken, encodedIdToken } = validateIdToken({
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    idToken: tokenResponse.id_token,
+    issuer: GOOGLE_ISSUER_URL,
+    nonce,
+    idTokenSigningAlgValuesSupported: id_token_signing_alg_values_supported,
+    acrValuesSupported: acr_values_supported,
+  });
+
+  return { tokenResponse, decodedIdToken, encodedIdToken };
+};
 
 export const validateIdToken = ({
   idToken,
