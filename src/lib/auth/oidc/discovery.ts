@@ -3,7 +3,7 @@ import { OidcConfig } from "@/models";
 const oidcCache = new Map<string, OidcConfig>();
 const pending = new Map<string, Promise<OidcConfig>>();
 
-export async function getOidcConfig(issuer: string): Promise<OidcConfig> {
+export const getOidcConfig = async (issuer: string): Promise<OidcConfig> => {
   // already cached
   if (oidcCache.has(issuer)) {
     return oidcCache.get(issuer)!;
@@ -28,7 +28,7 @@ export async function getOidcConfig(issuer: string): Promise<OidcConfig> {
 
   pending.set(issuer, promise);
   return promise;
-}
+};
 
 export const fetchOpenidConfiguration = async (
   issuerUrl: string,

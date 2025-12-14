@@ -1,3 +1,3 @@
-export * from "@/lib/auth/oidc/authorize";
-export * from "@/lib/auth/oidc/discovery";
-export * from "@/lib/auth/oidc/token";
+export * from "./authorize";
+export * from "./discovery";
+export * from "./token";
