@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { GOOGLE_ISSUER_URL } from "@/constants";
 import { generateAuthorizeUrl, getOidcConfig } from "@/lib/auth/oidc";
-import { saveTokenParams } from "@/lib/auth/cookies";
+import { storeTokenParamsCookie } from "@/lib/auth/cookies";
 
 const GET = async () => {
   const oidcConfig = await getOidcConfig(GOOGLE_ISSUER_URL);
@@ -13,7 +13,7 @@ const GET = async () => {
     prompt: "consent",
   });
 
-  await saveTokenParams({ state, nonce });
+  await storeTokenParamsCookie({ state, nonce });
 
   return NextResponse.redirect(url);
 };

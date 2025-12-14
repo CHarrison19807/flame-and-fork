@@ -6,12 +6,28 @@ import {
   validateTokenResponse,
 } from "@/lib/auth/oidc";
 import { GOOGLE_ISSUER_URL } from "@/constants";
-import { OAuthTokenRequest, TokenResponse } from "@/models";
-import { getTokenParams } from "@/lib/auth/cookies";
+import { DecodedIdToken, OAuthTokenRequest, TokenResponse } from "@/models";
+import {
+  clearTokenParamsCookie,
+  getTokenParamsCookie,
+  parseTokenParamsCookie,
+  storeSessionCookie,
+} from "@/lib/auth/cookies";
+import { createSession } from "@/lib/prisma";
+import { validateSessionCookie, linkOidcToUser } from "@/lib/services";
 
 // TODO refactor to handler
 const GET = async (request: Request) => {
-  const oidcAuthParams = await getTokenParams();
+  const tokenParamsCookie = await getTokenParamsCookie();
+  let oidcAuthParams;
+
+  try {
+    oidcAuthParams = parseTokenParamsCookie(tokenParamsCookie);
+    await clearTokenParamsCookie();
+  } catch (error) {
+    console.error("Error validating token params cookie:", error);
+  }
+
   if (!oidcAuthParams) {
     return NextResponse.redirect("http://localhost:3000/");
   }
@@ -49,13 +65,22 @@ const GET = async (request: Request) => {
   const tokenResponse: TokenResponse = await (
     await fetch(oidcConfig.token_endpoint, tokenRequest)
   ).json();
-  const done = await validateTokenResponse(
+
+  const { decodedIdToken } = await validateTokenResponse(
     tokenResponse,
     oidcAuthParams.nonce,
   );
 
-  console.log("done", done);
+  const user = await linkOidcToUser(decodedIdToken as DecodedIdToken);
+  const session = await createSession(user.id);
+  const savedSession = await storeSessionCookie(session);
+  const validatedSession = await validateSessionCookie(session.id);
 
+  console.log("Validated session:", validatedSession);
+  console.log("User logged in via Google OIDC:", user);
+  console.log("Saved session:", savedSession);
+  console.log("Session created:", session);
+  console.log("Redirecting to homepage...");
   return NextResponse.redirect("http://localhost:3000/");
 };
 
