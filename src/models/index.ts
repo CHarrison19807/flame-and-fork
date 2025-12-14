@@ -66,3 +66,11 @@ export interface ValidateAuthorizeResponseParams {
   authorizeResponse: AuthorizeResponse;
   expectedState: string;
 }
+
+export interface DecodedIdToken extends JWTPayload {
+  email: string;
+  name: string;
+  email_verified?: boolean;
+  given_name?: string;
+  family_name?: string;
+}
